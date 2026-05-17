@@ -1,0 +1,15 @@
+{
+    "name": "To-Do List",
+    "short_name": "MyList",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#121212",
+    "icons": [
+        {
+            "src": "Assest/icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
