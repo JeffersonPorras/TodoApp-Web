@@ -5,13 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <title>Document</title>
+    <title>My List App</title>
 </head>
 <body>
+    <main class="container">
 
-    
-    
+        <nav class="container__nav">
+            <button class="container__nav-btn container__nav-btn--active" data-view="diarias">Tareas Diarias</button>
+            <button class="container__nav-btn" data-view="futuras">Tareas Futuras</button>
+            <button class="container__nav-btn" data-view="realizadas">Tareas Completas</button>
+        </nav>
 
+
+        <h1 class="container__title">My Tasks List</h1>
+
+        <div class="container__form">
+            <input type="text" class="container__form-input" id="form-input" placeholder="escribe tu tarea" autocomplete="off">
+            <button class="container__btn" id="form-btn">Agregar</button>
+        </div>
+
+        <section class="container__view" id="view-diarias">
+            <h2 class="container__section-subtitle">Tareas Diarias</h2>
+            <ul class="container__section-list" id="list-diarias"></ul>
+        </section>
+        <section class="container__view container__view--hidden" id="view-futuras">
+            <h2 class="container__section-subtitle">Tareas Futuras</h2>
+            <ul class="container__section-list" id="list-futuras"></ul>
+        </section>
+        <section class="container__view container__view--hidden" id="view-realizadas">
+            <h2 class="container__section-subtitle">Tareas Completadas</h2>
+            <ul class="container__section-list" id="list-realizadas"></ul>
+        </section>
+
+    </main>
     <script src="index.js"></script>
 </body>
 </html>
