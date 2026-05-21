@@ -1,6 +1,9 @@
 const containerInput = document.getElementById('form-input');
 const containerBtn = document.getElementById('form-btn');
 const listaDiarias = document.getElementById('list-diarias')
+const listasDiarias = document.getElementById('list-diarias');
+const listasFuturas = document.getElementById('list-futuras');
+const listasRealizadas = document.getElementById('list-futuras');
 
 
 const navButtons = document.querySelectorAll('.container__nav-btn');
@@ -42,6 +45,28 @@ containerBtn.addEventListener('click', () =>{
     containerInput.value = '';
     containerInput.focus();
 
+    renderTasks();
     console.log("lista de tareas actuales : ", tasks);
     
-})
+});
+
+const renderTasks = () =>{
+    listaDiarias.textContent = '';
+    listasFuturas.textContent = '';
+    listasRealizadas.textContent = '';
+
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.classList.add('container__section-item');
+        li.textContent = task.text;
+
+        if (task.view === 'diarias') {
+            listaDiarias.appendChild(li);
+        } else if (task.view === 'futuras') {
+            listasFuturas.appendChild(li);
+        } else if(task.view === 'realizadas'){
+            listasRealizadas.appendChild(li)
+        }
+    });
+
+}
