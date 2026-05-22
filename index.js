@@ -1,13 +1,12 @@
+const navButtons = document.querySelectorAll('.container__nav-btn');
+const views = document.querySelectorAll('.container__view');
+
 const containerInput = document.getElementById('form-input');
 const containerBtn = document.getElementById('form-btn');
-const listaDiarias = document.getElementById('list-diarias')
+
 const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
 const listasRealizadas = document.getElementById('list-futuras');
-
-
-const navButtons = document.querySelectorAll('.container__nav-btn');
-const views = document.querySelectorAll('.container__view');
 
 let tasks = [];
 
@@ -46,19 +45,31 @@ containerBtn.addEventListener('click', () =>{
     containerInput.focus();
 
     renderTasks();
-    console.log("lista de tareas actuales : ", tasks);
-    
 });
 
 const renderTasks = () =>{
-    listaDiarias.textContent = '';
+    listasDiarias.textContent = '';
     listasFuturas.textContent = '';
     listasRealizadas.textContent = '';
 
     tasks.forEach(task => {
         const li = document.createElement('li');
         li.classList.add('container__section-item');
-        li.textContent = task.text;
+        
+        const taskTextSpan = document.createElement('span');
+        taskTextSpan.textContent = task.text;
+        li.appendChild(taskTextSpan)
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '❌';
+        deleteBtn.classList.add('container__btn-delete');
+
+        deleteBtn.addEventListener('click', () =>{
+            eliminarTareaPorId(task.id)
+        })
+
+        li.appendChild(deleteBtn);
+        
 
         if (task.view === 'diarias') {
             listaDiarias.appendChild(li);
@@ -69,4 +80,10 @@ const renderTasks = () =>{
         }
     });
 
+}
+
+const eliminarTareaPorId = (idRecibido) =>{
+    tasks = tasks.filter(task => task.id !== idRecibido);
+
+    renderTasks();
 }
