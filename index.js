@@ -6,7 +6,7 @@ const containerBtn = document.getElementById('form-btn');
 
 const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
-const listasRealizadas = document.getElementById('list-futuras');
+const listasRealizadas = document.getElementById('list-realizadas');
 
 let tasks = [];
 
@@ -58,21 +58,38 @@ const renderTasks = () =>{
         
         const taskTextSpan = document.createElement('span');
         taskTextSpan.textContent = task.text;
-        li.appendChild(taskTextSpan)
+        li.appendChild(taskTextSpan);
+
+        const actionsContainer = document.createElement('div');
+        actionsContainer.classList.add('container__item-actions');
+
+        if (!task.completed) {
+            const completeBtn = document.createElement('button');
+            completeBtn.textContent = '✔️'
+            completeBtn.classList.add('container__btn-action')
+            
+            completeBtn.addEventListener('click',() =>{
+                completarTareaPorId(task.id);
+        });
+        actionsContainer.appendChild(completeBtn);
+        };
+
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = '❌';
-        deleteBtn.classList.add('container__btn-delete');
+        deleteBtn.classList.add('container__btn-action', 'container__btn-action--delete');
 
         deleteBtn.addEventListener('click', () =>{
             eliminarTareaPorId(task.id)
         })
 
-        li.appendChild(deleteBtn);
+        actionsContainer.appendChild(deleteBtn);
+
+        li.appendChild(actionsContainer);
         
 
         if (task.view === 'diarias') {
-            listaDiarias.appendChild(li);
+            listasDiarias.appendChild(li);
         } else if (task.view === 'futuras') {
             listasFuturas.appendChild(li);
         } else if(task.view === 'realizadas'){
@@ -86,4 +103,19 @@ const eliminarTareaPorId = (idRecibido) =>{
     tasks = tasks.filter(task => task.id !== idRecibido);
 
     renderTasks();
+}
+
+const completarTareaPorId = (idRecibido) =>{
+    tasks = tasks.map(task => {
+        if (task.id === idRecibido) {
+            return {
+                ...task,
+                completed:true,
+                view:'realizadas'
+            };
+        }
+        
+        return task;
+    })
+    renderTasks();    
 }
