@@ -8,7 +8,7 @@ const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
 const listasRealizadas = document.getElementById('list-realizadas');
 
-let tasks = [];
+let tasks = JSON.parse(localStorage.getItem('cyberTasks')) || [];
 
 navButtons.forEach(button =>{
     button.addEventListener('click', () => {
@@ -40,10 +40,9 @@ containerBtn.addEventListener('click', () =>{
     };
 
     tasks.push(newtask);
-
     containerInput.value = '';
     containerInput.focus();
-
+    guardarEnLocalStorage();
     renderTasks();
 });
 
@@ -101,7 +100,7 @@ const renderTasks = () =>{
 
 const eliminarTareaPorId = (idRecibido) =>{
     tasks = tasks.filter(task => task.id !== idRecibido);
-
+    guardarEnLocalStorage();
     renderTasks();
 }
 
@@ -116,6 +115,14 @@ const completarTareaPorId = (idRecibido) =>{
         }
         
         return task;
-    })
+    });
+    guardarEnLocalStorage();
     renderTasks();    
 }
+
+const guardarEnLocalStorage = () =>{
+    localStorage.setItem('cyberTasks', JSON.stringify(tasks))
+}
+
+
+renderTasks();
