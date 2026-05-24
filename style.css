@@ -1,5 +1,5 @@
 :root{
-
+    /* Modo Dark */
 --neon-blue: #007bff;
 --neon-green: #00ff00;
 --neon-yellow: #ffff00;
@@ -34,24 +34,67 @@ body{
     min-height: 100vh;
     padding: 15px;
 }
+
+body.light-mode{
+    --dark-bg:#d8d4d4;
+    --bg-card: #ffffff;
+    --text-white: #1a1a24;
+    --shadow-dark: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .container__section-subtitle {
+    text-shadow: none;
+    color: #3dcf03;
+}
+body.light-mode .container__btn{
+     color: #3dcf03;
+}
+
+body.light-mode .container__form-input {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .container__section-item{
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--neon-blue);
+    box-shadow: -8px 0px 10px -4px var(--neon-blue);
+}
 .container{
     width: 100%;
     max-width: 450px;
-    background: rgba(11, 15, 25, 0.7);
+    background: var(--bg-card, rgba(11, 15, 25, 0.7));
     border: var(--border-glow);
     border-radius: 16px;
-    padding: 20px;
+    padding: 12px;
     box-shadow: var(--shadow-dark);
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 12px;
+}
+
+.container__theme-btn{
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-black);
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    border-radius: 45%;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    position: static;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-ligth);
 }
 
 .container__nav{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     padding: 5px;
     border-radius: 8px;
 }
@@ -59,7 +102,8 @@ body{
 .container__nav-btn{
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-white);
+    opacity: 0.6;
     padding: 10px;
     font-weight: bold;
     font-size: 0.9rem;
@@ -95,8 +139,8 @@ body{
 .container__form-input{
     flex: 1;
     min-width: 260px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 14px 15px;
     border-radius: 8px;
     color: var(--text-white);
@@ -173,13 +217,14 @@ body{
 }
 
 .container__btn-action{
+    width: 40px;
     background: transparent;
     border: none;
     font-size: 1.1rem;
     cursor: pointer;
     padding: 6px;
     transition: transform 0.2s ease;
-    color: green;
+    color: #3dcf03;
 }
 
 .container__btn-action:active{
@@ -196,4 +241,14 @@ body{
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@media (min-width: 500px){
+
+    .container__theme-btn{
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        margin: 0;
+   }
 }

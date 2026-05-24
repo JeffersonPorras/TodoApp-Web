@@ -1,3 +1,5 @@
+const themeToggleBtn = document.getElementById('theme-toggle');
+
 const navButtons = document.querySelectorAll('.container__nav-btn');
 const views = document.querySelectorAll('.container__view');
 
@@ -64,7 +66,7 @@ const renderTasks = () =>{
 
         if (!task.completed) {
             const completeBtn = document.createElement('button');
-            completeBtn.textContent = '✔️'
+            completeBtn.textContent = '✔'
             completeBtn.classList.add('container__btn-action')
             
             completeBtn.addEventListener('click',() =>{
@@ -123,6 +125,24 @@ const completarTareaPorId = (idRecibido) =>{
 const guardarEnLocalStorage = () =>{
     localStorage.setItem('cyberTasks', JSON.stringify(tasks))
 }
+
+if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    themeToggleBtn.textContent = '☀️';
+}
+
+themeToggleBtn.addEventListener('click', () =>{
+    document.body.classList.toggle('light-mode');
+
+    if (document.body.classList.contains('light-mode')) {
+        localStorage.setItem('theme', 'light');
+        themeToggleBtn.textContent = '🌙'
+    } else {
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.textContent = '☀️'
+    }
+});
+
 
 
 renderTasks();
