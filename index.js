@@ -38,7 +38,8 @@ containerBtn.addEventListener('click', () =>{
         id: Date.now(),
         text: taskText,
         completed: false,
-        view:'diarias'
+        view:'diarias',
+        origin: 'diarias'
     };
 
     tasks.push(newtask);
@@ -143,6 +144,26 @@ themeToggleBtn.addEventListener('click', () =>{
     }
 });
 
+const verificarYReinicarTareas = () =>{
+    const hoy = new Date().toLocaleDateString('en-CO');
+    const ultimaFecha = localStorage.getItem('ultimaFechaControl');
 
+    if (ultimaFecha && ultimaFecha !==  hoy) {
+        tasks = tasks.map(task =>{
+            if (task.origin === 'diarias' && task.completed === true) {
+                return{
+                    ...task,
+                    completed: false,
+                    view: 'diarias'
+                };
+            }
+            return task;
+        });
+        guardarEnLocalStorage();
+        renderTasks();
+    }
+    localStorage.setItem('ultimaFechaControl', hoy);
+}
 
+verificarYReinicarTareas();
 renderTasks();
