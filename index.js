@@ -5,6 +5,7 @@ const views = document.querySelectorAll('.container__view');
 
 const containerInput = document.getElementById('form-input');
 const containerBtn = document.getElementById('form-btn');
+const containerSelect = document.getElementById('form-select');
 
 const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
@@ -32,14 +33,16 @@ navButtons.forEach(button =>{
 containerBtn.addEventListener('click', () =>{
     const taskText = containerInput.value.trim();
 
+    const destinoSeleccionado = containerSelect.value;
+
     if (taskText === '') return;
 
     const newtask = {
         id: Date.now(),
         text: taskText,
         completed: false,
-        view:'diarias',
-        origin: 'diarias'
+        view: destinoSeleccionado,
+        origin: destinoSeleccionado
     };
 
     tasks.push(newtask);
