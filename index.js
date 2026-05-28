@@ -65,33 +65,63 @@ const renderTasks = () =>{
         taskTextSpan.textContent = task.text;
         li.appendChild(taskTextSpan);
 
-        const actionsContainer = document.createElement('div');
-        actionsContainer.classList.add('container__item-actions');
+        const btnContainer = document.createElement('div');
+        btnContainer.classList.add('container__item-actions');
 
-        if (!task.completed) {
-            const completeBtn = document.createElement('button');
-            completeBtn.textContent = '✔'
-            completeBtn.classList.add('container__btn-action')
-            
-            completeBtn.addEventListener('click',() =>{
-                completarTareaPorId(task.id);
+        if (task.view === 'futuras' || task.fechaVencimiento) {
+            const dateBtn = document.createElement('button');
+            dateBtn.classList.add('container__btn-action', 'date-btn');
+            dateBtn.innerHTML = `
+            🗓️ 
+            <input type="date" class="task-date-input date-input" value="${task.fechaVencimiento || ''}">
+        `;
+        const dateInput = dateBtn.querySelector('.task-date-input');
+        dateInput.addEventListener('change', (e) =>{
+            const nuevaFecha = e.target.value;
+
+            tasks = tasks.map(t => {
+                if (t.id === task.id) {
+                    return {...t, fechaVencimiento: nuevaFecha};
+                }
+                return t;
+            });
+
+            guardarEnLocalStorage();
+            renderTasks();
         });
-        actionsContainer.appendChild(completeBtn);
+
+        btnContainer.appendChild(dateBtn);
+        }
+
+        
+
+        if (task.fechaVencimiento) {
+            const dateBadge = document.createElement('span');
+            dateBadge.classList.add('task-date-badge');
+
+            const [ano, mes, dia] = task.fechaVencimiento.split('-');
+            dateBadge.textContent = `⏳ ${dia}/${mes}`;
+            li.appendChild(dateBadge);
+            
         };
+        
+        const completeBtn = document.createElement('button');
+        completeBtn.classList.add('container__btn-action', 'container__btn-check');
+        completeBtn.textContent = '✔';
+        completeBtn.addEventListener('click', () => completarTareaPorId(task.id));
 
 
         const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('container__btn-action', 'container__btn-delete');
         deleteBtn.textContent = '❌';
-        deleteBtn.classList.add('container__btn-action', 'container__btn-action--delete');
+        deleteBtn.addEventListener('click', () => eliminarTareaPorId(task.id));
 
-        deleteBtn.addEventListener('click', () =>{
-            eliminarTareaPorId(task.id)
-        })
-
-        actionsContainer.appendChild(deleteBtn);
-
-        li.appendChild(actionsContainer);
         
+
+
+        btnContainer.appendChild(completeBtn);
+        btnContainer.appendChild(deleteBtn);
+        li.appendChild(btnContainer);
 
         if (task.view === 'diarias') {
             listasDiarias.appendChild(li);
@@ -99,7 +129,7 @@ const renderTasks = () =>{
             listasFuturas.appendChild(li);
         } else if(task.view === 'realizadas'){
             listasRealizadas.appendChild(li)
-        }
+        } 
     });
 
 }
