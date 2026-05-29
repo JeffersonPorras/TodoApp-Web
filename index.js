@@ -156,6 +156,40 @@ const completarTareaPorId = (idRecibido) =>{
     renderTasks();    
 }
 
+const verificarFechasProximas = () =>{
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const hoy = new Date();
+
+    hoy.setHours(0, 0, 0, 0);
+
+    tasks.forEach(task =>{
+        if (task.fechaVencimiento && !task.completed) {
+            const fechaTarea = new Date(task.fechaVencimiento);
+            fechaTarea.setHours(0, 0, 0, 0);
+            fechaTarea.setDate(fechaTarea.getDate() + 1);
+
+            const diferenciaTiempo = fechaTarea - hoy;
+            const diferenciaDias = Math.round(diferenciaTiempo / (1000 * 60 * 60 *24));
+
+            if (diferenciaDias === 1 || diferenciaDias === 2) {
+                const yaNotificadoHoy = sessionStorage.getItem(`notificado-${task.id}`);
+
+                if (!yaNotificadoHoy) {
+                    new Notification("¡Alerta el Futuro ⏳",{
+                        body: `Tu tarea "${task.text}" está a solo ${diferenciaDias} dia(s) de vencer`,
+                        icon: "Assest/icon.png",
+                        tag: `Vencimiento-${task.id}`
+                    });
+                    sessionStorage.setItem(`notificado-${task.id}`, 'true');
+                }
+            
+            }
+        }
+    });
+}
+
+
 const guardarEnLocalStorage = () =>{
     localStorage.setItem('cyberTasks', JSON.stringify(tasks))
 }
@@ -198,5 +232,21 @@ const verificarYReinicarTareas = () =>{
     localStorage.setItem('ultimaFechaControl', hoy);
 }
 
+const solicitarPermisosNotificaciones = () =>{
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permiso => {
+            if (permiso === 'granted') {
+                console.log(('sistemas de alerta de la PWA autoriados! 🚀'));
+            }
+        })
+    }
+
+}
+
+
+
+
 verificarYReinicarTareas();
+solicitarPermisosNotificaciones();
+verificarFechasProximas();
 renderTasks();
