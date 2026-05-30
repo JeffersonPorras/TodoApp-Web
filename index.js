@@ -60,13 +60,33 @@ const renderTasks = () =>{
     tasks.forEach(task => {
         const li = document.createElement('li');
         li.classList.add('container__section-item');
+
+        const taskContentContainer = document.createElement('div');
+        taskContentContainer.classList.add('container__task-content');
         
         const taskTextSpan = document.createElement('span');
         taskTextSpan.textContent = task.text;
-        li.appendChild(taskTextSpan);
+        taskContentContainer.appendChild(taskTextSpan);
+
+         if (task.fechaVencimiento) {
+            const dateBadge = document.createElement('span');
+            dateBadge.classList.add('task-date-badge');
+
+            const fechaObj = new Date (task.fechaVencimiento);
+            fechaObj.setDate(fechaObj.getDate() + 1);
+
+            const dia = String(fechaObj.getDate()).padStart(2, '0');
+            const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+            
+            dateBadge.textContent = `⏳ ${dia}/${mes}`;
+            taskContentContainer.appendChild(dateBadge);
+        };
+
+        li.appendChild(taskContentContainer);
 
         const btnContainer = document.createElement('div');
         btnContainer.classList.add('container__item-actions');
+
 
         if (task.view === 'futuras' || task.fechaVencimiento) {
             const dateBtn = document.createElement('button');
@@ -75,6 +95,7 @@ const renderTasks = () =>{
             🗓️ 
             <input type="date" class="task-date-input date-input" value="${task.fechaVencimiento || ''}">
         `;
+
         const dateInput = dateBtn.querySelector('.task-date-input');
         dateInput.addEventListener('change', (e) =>{
             const nuevaFecha = e.target.value;
@@ -92,18 +113,6 @@ const renderTasks = () =>{
 
         btnContainer.appendChild(dateBtn);
         }
-
-        
-
-        if (task.fechaVencimiento) {
-            const dateBadge = document.createElement('span');
-            dateBadge.classList.add('task-date-badge');
-
-            const [ano, mes, dia] = task.fechaVencimiento.split('-');
-            dateBadge.textContent = `⏳ ${dia}/${mes}`;
-            li.appendChild(dateBadge);
-            
-        };
         
         const completeBtn = document.createElement('button');
         completeBtn.classList.add('container__btn-action', 'container__btn-check');
@@ -116,11 +125,10 @@ const renderTasks = () =>{
         deleteBtn.textContent = '❌';
         deleteBtn.addEventListener('click', () => eliminarTareaPorId(task.id));
 
-        
-
 
         btnContainer.appendChild(completeBtn);
         btnContainer.appendChild(deleteBtn);
+        
         li.appendChild(btnContainer);
 
         if (task.view === 'diarias') {
