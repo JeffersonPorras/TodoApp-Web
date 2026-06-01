@@ -168,16 +168,18 @@ const verificarFechasProximas = () =>{
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
     const hoy = new Date();
-
     hoy.setHours(0, 0, 0, 0);
 
     tasks.forEach(task =>{
-        if (task.fechaVencimiento && !task.completed) {
-            const fechaTarea = new Date(task.fechaVencimiento);
-            fechaTarea.setHours(0, 0, 0, 0);
-            fechaTarea.setDate(fechaTarea.getDate() + 1);
+        if (task.fechaVencimiento && task.fechaVencimiento.trim() !== '' && !task.completed) {
+            const fechaObj = new Date(task.fechaVencimiento)
+            
+            if (isNaN(fechaObj.getTime())) return;
 
-            const diferenciaTiempo = fechaTarea - hoy;
+            fechaObj.setHours(0, 0, 0, 0);
+            fechaObj.setDate(fechaTarea.getDate() + 1);
+
+            const diferenciaTiempo = fechaObj - hoy;
             const diferenciaDias = Math.round(diferenciaTiempo / (1000 * 60 * 60 *24));
 
             if (diferenciaDias === 1 || diferenciaDias === 2) {
