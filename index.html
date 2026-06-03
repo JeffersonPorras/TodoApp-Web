@@ -16,6 +16,8 @@
             <button class="container__nav-btn container__nav-btn--active" data-view="diarias">Tareas Diarias</button>
             <button class="container__nav-btn" data-view="futuras">Tareas Futuras</button>
             <button class="container__nav-btn" data-view="realizadas">Tareas Completas</button>
+
+            <button class="container__nav-btn btn-sistemas" data-view="estadisticas">📊 Estadística</button>
         </nav>
 
 
@@ -36,15 +38,41 @@
             <h2 class="container__section-subtitle">Tareas Diarias</h2>
             <ul class="container__section-list" id="list-diarias"></ul>
         </section>
+
         <section class="container__view container__view--hidden" id="view-futuras">
             <h2 class="container__section-subtitle">Tareas Futuras</h2>
             <ul class="container__section-list" id="list-futuras"></ul>
         </section>
+
         <section class="container__view container__view--hidden" id="view-realizadas">
             <h2 class="container__section-subtitle">Tareas Completadas</h2>
             <ul class="container__section-list" id="list-realizadas"></ul>
         </section>
 
+        <section class="container__view container__view--hidden" id="view-estadisticas">
+            <h2 class="container__section-subtitle">[ PANEL DE RENDIMIENTO ]</h2>
+
+            <div class="stats-panel">
+                <div class="stats-card">
+                    <h3>ANÁLISIS SEMANAL (DIARIAS)</h3>
+                    <P id="stats-weekly-summarty">Analizando registros de red...</P>
+                    <div class="weekly-days-grid" id="weekly-days-grid"> 
+
+                    </div>
+
+                    <div class="stats-card stats-card--annual">
+                        <h3>RECONOCIMIENTO ANUAL (METAS CUMPLIDAS)</h3>
+                        <div class="annual-counter">
+                            <span id="stats-annual-count">00</span>
+                            <p>Metas Cumplidas de Este Año</p>
+                        </div>
+                        <p class="stats-motivational" id="stats-motivational-msg">Sistemas estables.</p>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
     </main>
     <script src="index.js"></script>
 </body>

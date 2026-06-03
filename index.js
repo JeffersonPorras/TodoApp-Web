@@ -20,6 +20,10 @@ navButtons.forEach(button =>{
 
         const targetView = button.getAttribute('data-view');  
 
+        if (targetView === 'estadisticas') {
+            actualizarPanelEstadisticas();
+        }
+
         views.forEach(view =>{
             if (view.id ===`view-${targetView}`) {
                 view.classList.remove('container__view--hidden');
@@ -139,6 +143,7 @@ const renderTasks = () =>{
             listasRealizadas.appendChild(li)
         } 
     });
+    actualizarPanelEstadisticas();
 
 }
 
@@ -148,13 +153,22 @@ const eliminarTareaPorId = (idRecibido) =>{
     renderTasks();
 }
 
-const completarTareaPorId = (idRecibido) =>{
+const completarTareaPorId = (id) =>{
+
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, '0')
+    const mes = String(hoy.getMonth()).padStart(2, '0');
+    const ano = hoy.getFullYear();
+    const fechaHoySting = `${ano}-${mes}-${dia}`;
+
+
     tasks = tasks.map(task => {
-        if (task.id === idRecibido) {
+        if (task.id === id) {
             return {
                 ...task,
                 completed:true,
-                view:'realizadas'
+                view:'realizadas',
+                fechaCompletado: fechaHoySting
             };
         }
         
@@ -177,7 +191,7 @@ const verificarFechasProximas = () =>{
             if (isNaN(fechaObj.getTime())) return;
 
             fechaObj.setHours(0, 0, 0, 0);
-            fechaObj.setDate(fechaTarea.getDate() + 1);
+            fechaObj.setDate(fechaObj.getDate() + 1);
 
             const diferenciaTiempo = fechaObj - hoy;
             const diferenciaDias = Math.round(diferenciaTiempo / (1000 * 60 * 60 *24));
@@ -197,6 +211,36 @@ const verificarFechasProximas = () =>{
             }
         }
     });
+}
+
+const actualizarPanelEstadisticas = () =>{
+    const txtContadorAnual = document.getElementById('stats-anual-count');
+    const txtMensajeMotivacional = document.getElementById('stats-motivational-msg');
+
+    if (!txtContadorAnual) return;
+    
+    const anoActual = new Date().getFullYear();
+
+    const metasLogradasEsteAno = tasks.filter(task =>{
+        if (task.completed && task.origin === 'futuras' && task.fechaCompletado) {
+            return task.fechaCompletado.startWith(`${anoActual}`);
+        }
+        return false;
+    });
+
+    const totalMetas = metasLogradasEsteAno.length;
+    txtContadorAnual.textContent = totalMetas < 10 ? `0${totalMetas}` : totalMetas;
+
+    if (totalMetas === 0) {
+        txtMensajeMotivacional.textContent = "[SISTEMA]: sin registros de mestas este año. Inicia una misión futura.";
+    } else if (totalMetas > 0 && totalMetas <= 5) {
+        txtMensajeMotivacional.textContent = "⚡ [SISTEMA EN MARCHA]: Núcleo activo. Estás contruyendo tu camino.";
+    } else if (totalMetas > 5 && totalMetas <= 15) {
+        txtMensajeMotivacional.textContent = "🚀 [PRODUCTIVIDAD ALTA]: Rediseñando el futuro. Gran Progreso!!!.";
+    }else{
+        txtMensajeMotivacional.textContent = "🔥 [ESTADO: DIOS DE LA RED]: has roto los limites establecidos este Año.";
+    }
+
 }
 
 
