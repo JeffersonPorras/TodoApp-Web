@@ -1,11 +1,11 @@
 const themeToggleBtn = document.getElementById('theme-toggle');
-
 const navButtons = document.querySelectorAll('.container__nav-btn');
 const views = document.querySelectorAll('.container__view');
 
 const containerInput = document.getElementById('form-input');
 const containerBtn = document.getElementById('form-btn');
 const containerSelect = document.getElementById('form-select');
+
 
 const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
@@ -36,7 +36,6 @@ navButtons.forEach(button =>{
 
 containerBtn.addEventListener('click', () =>{
     const taskText = containerInput.value.trim();
-
     const destinoSeleccionado = containerSelect.value;
 
     if (taskText === '') return;
@@ -46,14 +45,15 @@ containerBtn.addEventListener('click', () =>{
         text: taskText,
         completed: false,
         view: destinoSeleccionado,
-        origin: destinoSeleccionado
+        origin: containerSelect.value,
+        fechaCreacion: new Date().toISOString().split('T')[0]
     };
 
     tasks.push(newtask);
-    containerInput.value = '';
-    containerInput.focus();
     guardarEnLocalStorage();
     renderTasks();
+    containerInput.value = '';
+    containerInput.focus();
 });
 
 const renderTasks = () =>{
@@ -76,13 +76,12 @@ const renderTasks = () =>{
             const dateBadge = document.createElement('span');
             dateBadge.classList.add('task-date-badge');
 
-            const fechaObj = new Date (task.fechaVencimiento);
-            fechaObj.setDate(fechaObj.getDate() + 1);
-
-            const dia = String(fechaObj.getDate()).padStart(2, '0');
-            const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+            const partes = task.fechaVencimiento.split('-');
+            const ano = partes[0];
+            const mes = partes[1];
+            const dia = partes[2];
             
-            dateBadge.textContent = `⏳ ${dia}/${mes}`;
+            dateBadge.textContent = `⏳ ${dia}/${mes}/${ano}`;
             taskContentContainer.appendChild(dateBadge);
         };
 
@@ -143,23 +142,29 @@ const renderTasks = () =>{
             listasRealizadas.appendChild(li)
         } 
     });
-    actualizarPanelEstadisticas();
+
+    const pestañaEstadisticasActiva = document.querySelector('.container__nav-btn[data-view="estadisticas"]');
+    if (pestañaEstadisticasActiva && pestañaEstadisticasActiva.classList.contains('container__nav-btn--active')) {
+        actualizarPanelEstadisticas();
+    }
+
 
 }
 
-const eliminarTareaPorId = (idRecibido) =>{
-    tasks = tasks.filter(task => task.id !== idRecibido);
+const eliminarTareaPorId = (id) =>{
+    tasks = tasks.filter(task => task.id !== id);
     guardarEnLocalStorage();
     renderTasks();
+    actualizarPanelEstadisticas();
 }
 
 const completarTareaPorId = (id) =>{
 
     const hoy = new Date();
     const dia = String(hoy.getDate()).padStart(2, '0')
-    const mes = String(hoy.getMonth()).padStart(2, '0');
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
     const ano = hoy.getFullYear();
-    const fechaHoySting = `${ano}-${mes}-${dia}`;
+    const fechaHoyString = `${ano}-${mes}-${dia}`;
 
 
     tasks = tasks.map(task => {
@@ -168,14 +173,15 @@ const completarTareaPorId = (id) =>{
                 ...task,
                 completed:true,
                 view:'realizadas',
-                fechaCompletado: fechaHoySting
+                fechaCompletado: fechaHoyString
             };
         }
         
         return task;
     });
     guardarEnLocalStorage();
-    renderTasks();    
+    renderTasks();   
+    actualizarPanelEstadisticas();  
 }
 
 const verificarFechasProximas = () =>{
@@ -191,7 +197,7 @@ const verificarFechasProximas = () =>{
             if (isNaN(fechaObj.getTime())) return;
 
             fechaObj.setHours(0, 0, 0, 0);
-            fechaObj.setDate(fechaObj.getDate() + 1);
+            fechaObj.setDate(fechaObj.getDate());
 
             const diferenciaTiempo = fechaObj - hoy;
             const diferenciaDias = Math.round(diferenciaTiempo / (1000 * 60 * 60 *24));
@@ -214,33 +220,91 @@ const verificarFechasProximas = () =>{
 }
 
 const actualizarPanelEstadisticas = () =>{
-    const txtContadorAnual = document.getElementById('stats-anual-count');
+    const txtContadorAnual = document.getElementById('stats-annual-count');
     const txtMensajeMotivacional = document.getElementById('stats-motivational-msg');
+    const txtResumenSemanal = document.getElementById('stats-weekly-summary');
+    const gridDiasSemana = document.getElementById('weekly-days-grid');
 
-    if (!txtContadorAnual) return;
+    if (!gridDiasSemana) return;
+
+    if (tasks.length === 0) {
+        if (txtResumenSemanal) txtResumenSemanal.textContent = "> Monitoreo: Sin datos en la base. "
+        if (txtContadorAnual) txtContadorAnual.textContent = "00";
+        gridDiasSemana.innerHTML = '';
+        return;
+    };
     
-    const anoActual = new Date().getFullYear();
+    const hoyObj = new Date();
+    const anoActual = hoyObj.getFullYear();
 
-    const metasLogradasEsteAno = tasks.filter(task =>{
-        if (task.completed && task.origin === 'futuras' && task.fechaCompletado) {
-            return task.fechaCompletado.startWith(`${anoActual}`);
-        }
-        return false;
+    const metasLogradasEsteAno = tasks.filter(t =>{
+       return t.completed === true &&
+        t.origin === 'futuras' && 
+        t.fechaCompletado && 
+        t.fechaCompletado.startsWith(anoActual.toString())
     });
 
     const totalMetas = metasLogradasEsteAno.length;
-    txtContadorAnual.textContent = totalMetas < 10 ? `0${totalMetas}` : totalMetas;
-
-    if (totalMetas === 0) {
-        txtMensajeMotivacional.textContent = "[SISTEMA]: sin registros de mestas este año. Inicia una misión futura.";
-    } else if (totalMetas > 0 && totalMetas <= 5) {
-        txtMensajeMotivacional.textContent = "⚡ [SISTEMA EN MARCHA]: Núcleo activo. Estás contruyendo tu camino.";
-    } else if (totalMetas > 5 && totalMetas <= 15) {
-        txtMensajeMotivacional.textContent = "🚀 [PRODUCTIVIDAD ALTA]: Rediseñando el futuro. Gran Progreso!!!.";
-    }else{
-        txtMensajeMotivacional.textContent = "🔥 [ESTADO: DIOS DE LA RED]: has roto los limites establecidos este Año.";
+    if (txtContadorAnual) {
+        txtContadorAnual.textContent = totalMetas < 10 ? `0${totalMetas}` : totalMetas;
     }
 
+    if (txtMensajeMotivacional) {
+        if (totalMetas === 0) {
+        txtMensajeMotivacional.textContent = "[SISTEMA]: sin Misiones cumplidas este año.";
+    }else if (totalMetas <= 5) {
+        txtMensajeMotivacional.textContent = "⚡ [SISTEMA EN MARCHA]: Núcleo activo. Buen Progreso.";
+    }else{
+        txtMensajeMotivacional.textContent = "🔥 [ESTADO: DIOS DE LA RED]: Límites Superados.";
+    }
+}
+
+    const nombresDias = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+    let conteoUltimos7Dias = [];
+
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(hoyObj.getDate() - i);
+        const fechaString = d.toISOString().split('T')[0];
+
+        const completadasEseDia = tasks.filter(t =>
+            t.completed == true &&
+            t.origin === 'diarias' &&
+            t.fechaCompletado === fechaString
+        ).length;
+
+        conteoUltimos7Dias.push({
+            label: nombresDias[d.getDay()],
+            amount: completadasEseDia
+        });
+        
+        const maxTarea = Math.max(...conteoUltimos7Dias.map(d => d.amount));
+        gridDiasSemana.innerHTML = '';
+
+        conteoUltimos7Dias.forEach(dia => {
+            const col = document.createElement('div');
+            col.classList.add('weekly-day-col');
+        
+            let objetivoDiario = Math.max(maxTarea, 5);
+            let altura = (dia.amount / objetivoDiario) * 100;
+
+            if (dia.amount === maxTarea && maxTarea > 0) col.classList.add('max-success'); 
+        
+            col.innerHTML = `
+                <span style="font-size: 0.65rem; font-weight: bold; color: var(--neon-blue);">${dia.amount}</span>
+                <div class="weekly-bar" style="height: ${Math.max(altura, 2)}%;"></div>
+                <span class="weekly-day-label">${dia.label}</span>
+            `;
+            gridDiasSemana.appendChild(col);
+        });
+
+   if (txtResumenSemanal) {
+        txtResumenSemanal.textContent = maxTarea === 0 
+        ? "> Monitoreo de Red: Sin actividad diaria reciente."
+        : `> Análisis: pico de rendimiento detectado.`;
+   }
+
+}
 }
 
 
@@ -281,7 +345,6 @@ const verificarYReinicarTareas = () =>{
             return task;
         });
         guardarEnLocalStorage();
-        renderTasks();
     }
     localStorage.setItem('ultimaFechaControl', hoy);
 }
@@ -304,3 +367,4 @@ verificarYReinicarTareas();
 solicitarPermisosNotificaciones();
 verificarFechasProximas();
 renderTasks();
+actualizarPanelEstadisticas();

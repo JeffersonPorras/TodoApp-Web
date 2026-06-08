@@ -381,6 +381,54 @@ body.light-mode .container__btn-action{
     font-weight: bold;
 }
 
+.weekly-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+    height: 120px;
+    align-items: flex-end;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed rgba(0, 123, 255, 0.3);
+}
+
+.weekly-day-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.weekly-bar{
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 123, 255, 0.2), var(--neon-blue));
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    border-radius: 4px 4px 0 0 ;
+    min-height: 2px;
+    transition: height 0.5s ease-out;
+}
+
+.weekly-day-col.max-success .weekly-bar{
+    background: linear-gradient(to top, rgba(0, 255, 0, 0.2), var(--neon-green));
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+.weekly-day-label{
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--text-white);
+    text-transform: uppercase;
+}
+
+#stats-weekly-summary{
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #a0aec0;
+    border-left: 2px solid var(--neon-blue);
+    padding-left: 8px;
+}
 
 
 @keyframes fadeIn {

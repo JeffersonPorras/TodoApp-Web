@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <title>My List App</title>
+    <title>TO-DO-LISt</title>
 </head>
 <body>
     <main class="container">
@@ -16,10 +16,8 @@
             <button class="container__nav-btn container__nav-btn--active" data-view="diarias">Tareas Diarias</button>
             <button class="container__nav-btn" data-view="futuras">Tareas Futuras</button>
             <button class="container__nav-btn" data-view="realizadas">Tareas Completas</button>
-
             <button class="container__nav-btn btn-sistemas" data-view="estadisticas">📊 Estadística</button>
         </nav>
-
 
         <h1 class="container__title">My Tasks List</h1>
 
@@ -30,6 +28,8 @@
                   <option value="diarias">Hoy</option>
                 <option value="futuras">Futuro</option>
             </select>
+
+            <!-- <input type="date" class="container__form-date" id="form-date"> -->
               
             <button class="container__btn" id="form-btn">Agregar</button>
         </div>
@@ -55,21 +55,16 @@
             <div class="stats-panel">
                 <div class="stats-card">
                     <h3>ANÁLISIS SEMANAL (DIARIAS)</h3>
-                    <P id="stats-weekly-summarty">Analizando registros de red...</P>
-                    <div class="weekly-days-grid" id="weekly-days-grid"> 
-
+                    <P id="stats-weekly-summary">Analizando registros de red...</P>
+                    <div class="weekly-days-grid" id="weekly-days-grid"></div>
+                </div>
+                <div class="stats-card stats-card--annual">
+                    <h3>RECONOCIMIENTO ANUAL (METAS CUMPLIDAS)</h3>
+                    <div class="annual-counter">
+                        <span id="stats-annual-count">00</span>
+                        <p>Metas Cumplidas de Este Año</p>
                     </div>
-
-                    <div class="stats-card stats-card--annual">
-                        <h3>RECONOCIMIENTO ANUAL (METAS CUMPLIDAS)</h3>
-                        <div class="annual-counter">
-                            <span id="stats-annual-count">00</span>
-                            <p>Metas Cumplidas de Este Año</p>
-                        </div>
-                        <p class="stats-motivational" id="stats-motivational-msg">Sistemas estables.</p>
-
-                    </div>
-
+                    <p class="stats-motivational" id="stats-motivational-msg">Sistemas estables.</p>
                 </div>
             </div>
         </section>
