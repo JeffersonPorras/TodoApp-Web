@@ -21,15 +21,14 @@
 
         <h1 class="container__title">My Tasks List</h1>
 
-        <div class="container__form">
+        <div class="container__form" id="todo-form-container">
             <input type="text" class="container__form-input" id="form-input" placeholder="escribe tu tarea" autocomplete="off">
             
             <select class="container__form-select" id="form-select">
-                  <option value="diarias">Hoy</option>
-                <option value="futuras">Futuro</option>
+                  <option value="diarias">Diaria</option>
+                <option value="futuras">Futura</option>
             </select>
 
-            <!-- <input type="date" class="container__form-date" id="form-date"> -->
               
             <button class="container__btn" id="form-btn">Agregar</button>
         </div>
@@ -46,6 +45,11 @@
 
         <section class="container__view container__view--hidden" id="view-realizadas">
             <h2 class="container__section-subtitle">Tareas Completadas</h2>
+            <div class="container__filters">
+                <button id="btn-filter-todas" class="filter-btn filter-btn--active" onclick="cambiarFiltroRealizadas('todas')">[TODAS]</button>
+                <button id="btn-filter-diarias" class="filter-btn" onclick="cambiarFiltroRealizadas('diarias')">[DIARIAS]</button>
+                <button id="btn-filter-futuras" class="filter-btn" onclick="cambiarFiltroRealizadas('futuras')">[FUTURAS]</button>
+            </div>
             <ul class="container__section-list" id="list-realizadas"></ul>
         </section>
 

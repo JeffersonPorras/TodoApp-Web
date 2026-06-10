@@ -2,16 +2,17 @@ const themeToggleBtn = document.getElementById('theme-toggle');
 const navButtons = document.querySelectorAll('.container__nav-btn');
 const views = document.querySelectorAll('.container__view');
 
+const formContainer = document.getElementById('todo-form-container');
 const containerInput = document.getElementById('form-input');
 const containerBtn = document.getElementById('form-btn');
 const containerSelect = document.getElementById('form-select');
-
 
 const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
 const listasRealizadas = document.getElementById('list-realizadas');
 
 let tasks = JSON.parse(localStorage.getItem('cyberTasks')) || [];
+let filtroRealizadasActivo = 'todas';
 
 navButtons.forEach(button =>{
     button.addEventListener('click', () => {
@@ -22,6 +23,14 @@ navButtons.forEach(button =>{
 
         if (targetView === 'estadisticas') {
             actualizarPanelEstadisticas();
+        }
+
+        if (formContainer) {
+            if (targetView === 'realizadas' || targetView === 'estadisticas') {
+                formContainer.style.display = 'none';
+            } else {
+                formContainer.style.display = 'flex';
+            }
         }
 
         views.forEach(view =>{
@@ -45,7 +54,7 @@ containerBtn.addEventListener('click', () =>{
         text: taskText,
         completed: false,
         view: destinoSeleccionado,
-        origin: containerSelect.value,
+        origin: destinoSeleccionado,
         fechaCreacion: new Date().toISOString().split('T')[0]
     };
 
@@ -139,7 +148,12 @@ const renderTasks = () =>{
         } else if (task.view === 'futuras') {
             listasFuturas.appendChild(li);
         } else if(task.view === 'realizadas'){
-            listasRealizadas.appendChild(li)
+
+            if (filtroRealizadasActivo === 'todas') {
+                listasRealizadas.appendChild(li)
+            }else if (task.origin === filtroRealizadasActivo) {
+                listasRealizadas.appendChild(li);
+            }
         } 
     });
 
@@ -348,6 +362,17 @@ const verificarYReinicarTareas = () =>{
     }
     localStorage.setItem('ultimaFechaControl', hoy);
 }
+
+const cambiarFiltroRealizadas = (nuevoFiltro) =>{
+    filtroRealizadasActivo = nuevoFiltro;
+
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('filter-btn--active'));
+    const btnActivo = document.getElementById(`btn-filter-${nuevoFiltro}`);
+    if(btnActivo) btnActivo.classList.add('filter-btn--active');
+
+    renderTasks();
+}
+
 
 const solicitarPermisosNotificaciones = () =>{
     if ('Notification' in window) {
