@@ -5,13 +5,13 @@ const views = document.querySelectorAll('.container__view');
 const formContainer = document.getElementById('todo-form-container');
 const containerInput = document.getElementById('form-input');
 const containerBtn = document.getElementById('form-btn');
-const containerSelect = document.getElementById('form-select');
 
 const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
 const listasRealizadas = document.getElementById('list-realizadas');
 
 let tasks = JSON.parse(localStorage.getItem('cyberTasks')) || [];
+let vistaActual = 'diarias';
 let filtroRealizadasActivo = 'todas';
 
 navButtons.forEach(button =>{
@@ -20,6 +20,10 @@ navButtons.forEach(button =>{
         button.classList.add('container__nav-btn--active');
 
         const targetView = button.getAttribute('data-view');  
+
+        if (targetView === 'diarias' || targetView === 'futuras') {
+            vistaActual = targetView;
+        }
 
         if (targetView === 'estadisticas') {
             actualizarPanelEstadisticas();
@@ -45,7 +49,7 @@ navButtons.forEach(button =>{
 
 containerBtn.addEventListener('click', () =>{
     const taskText = containerInput.value.trim();
-    const destinoSeleccionado = containerSelect.value;
+    
 
     if (taskText === '') return;
 
@@ -53,8 +57,8 @@ containerBtn.addEventListener('click', () =>{
         id: Date.now(),
         text: taskText,
         completed: false,
-        view: destinoSeleccionado,
-        origin: destinoSeleccionado,
+        view: vistaActual,
+        origin: vistaActual,
         fechaCreacion: new Date().toISOString().split('T')[0]
     };
 
@@ -344,23 +348,29 @@ themeToggleBtn.addEventListener('click', () =>{
 });
 
 const verificarYReinicarTareas = () =>{
-    const hoy = new Date().toLocaleDateString('en-CO');
+    const hoyObj = new Date();
+    const dia = String(hoyObj.getDate()).padStart(2, '0')
+    const mes = String(hoyObj.getMonth() + 1).padStart(2, '0');
+    const ano = hoyObj.getFullYear();
+    const hoyFormateado = `${ano}-${mes}-${dia}`;
+
     const ultimaFecha = localStorage.getItem('ultimaFechaControl');
 
-    if (ultimaFecha && ultimaFecha !==  hoy) {
+    if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
         tasks = tasks.map(task =>{
             if (task.origin === 'diarias' && task.completed === true) {
                 return{
                     ...task,
                     completed: false,
-                    view: 'diarias'
+                    view: 'diarias',
+                    fechaCompletado: null
                 };
             }
             return task;
         });
         guardarEnLocalStorage();
     }
-    localStorage.setItem('ultimaFechaControl', hoy);
+    localStorage.setItem('ultimaFechaControl', hoyFormateado);
 }
 
 const cambiarFiltroRealizadas = (nuevoFiltro) =>{

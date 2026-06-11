@@ -229,6 +229,7 @@ body.light-mode .container__btn-action{
     padding: 14px 16px;
     border-radius: 8px;
     display: flex;
+    gap: 18px;
     justify-content: space-between;
     align-items: center;
     font-size: 1rem;
@@ -430,6 +431,30 @@ body.light-mode .container__btn-action{
     padding-left: 8px;
 }
 
+.container__filters{
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.filter-btn{
+    background: var(--dark-bg);
+    color: var(--text-white);
+    box-shadow: var(--glow-blue);
+    border: 1px solid var(--neon-blue);
+    padding: 8px 4px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn--active{
+    color: var(--neon-green);
+    box-shadow: var(--glow-green);
+    border: 1px solid var(--neon-green);
+}
 
 @keyframes fadeIn {
     from {
