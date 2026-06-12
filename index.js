@@ -283,12 +283,17 @@ const actualizarPanelEstadisticas = () =>{
     for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(hoyObj.getDate() - i);
-        const fechaString = d.toISOString().split('T')[0];
+        
+        const anoLocal = d.getFullYear();
+        const mesLocal = String(d.getMonth() + 1).padStart(2, '0');
+        const diaLocal = String(d.getDate()).padStart(2, '0')
+        const fechaStringLocal = `${anoLocal}-${mesLocal}-${diaLocal}`;
+
 
         const completadasEseDia = tasks.filter(t =>
             t.completed == true &&
             t.origin === 'diarias' &&
-            t.fechaCompletado === fechaString
+            t.fechaCompletado === fechaStringLocal
         ).length;
 
         conteoUltimos7Dias.push({
