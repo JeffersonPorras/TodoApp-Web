@@ -362,17 +362,26 @@ const verificarYReinicarTareas = () =>{
     const ultimaFecha = localStorage.getItem('ultimaFechaControl');
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
-        tasks = tasks.map(task =>{
-            if (task.origin === 'diarias' && task.completed === true) {
-                return{
-                    ...task,
-                    completed: false,
-                    view: 'diarias',
-                    fechaCompletado: null
-                };
+
+        const historialRealizadas = tasks.filter(task => task.origin === 'realizadas');
+
+        const diariasNoCompletas = tasks.filter(task => task.origin === 'diarias' && task.completed === false);
+
+        const clonesParaElNuevoDia = tasks
+        .filter(task = task.origin === 'diarias' && task.completed === false)
+        .map((task, index) =>{
+            return {
+                ...task,
+                id: Date.now() + index,
+                completed: false,
+                view: 'diarias',
+                fechaCompletado: null,
+                fechaCreacion: hoyFormateado
             }
-            return task;
-        });
+        })
+
+        tasks = [...historialRealizadas, ...diariasNoCompletas, ...clonesParaElNuevoDia];
+
         guardarEnLocalStorage();
     }
     localStorage.setItem('ultimaFechaControl', hoyFormateado);
