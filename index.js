@@ -363,16 +363,12 @@ const verificarYReinicarTareas = () =>{
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
-        const historialRealizadas = tasks.filter(task => task.origin === 'realizadas');
-
-        const diariasNoCompletas = tasks.filter(task => task.origin === 'diarias' && task.completed === false);
-
-        const clonesParaElNuevoDia = tasks
-        .filter(task = task.origin === 'diarias' && task.completed === false)
+        const nuevasDiariasClonadas = tasks
+        .filter(task = task.origin === 'diarias' && task.completed === true)
         .map((task, index) =>{
             return {
                 ...task,
-                id: Date.now() + index,
+                id: self.crypto.randomUUID(),
                 completed: false,
                 view: 'diarias',
                 fechaCompletado: null,
@@ -380,7 +376,7 @@ const verificarYReinicarTareas = () =>{
             }
         })
 
-        tasks = [...historialRealizadas, ...diariasNoCompletas, ...clonesParaElNuevoDia];
+        tasks = [...tasks, ...nuevasDiariasClonadas];
 
         guardarEnLocalStorage();
     }
