@@ -364,8 +364,8 @@ const verificarYReinicarTareas = () =>{
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
         const nuevasDiariasClonadas = tasks
-        .filter(task = task.origin === 'diarias' && task.completed === true)
-        .map((task, index) =>{
+        .filter(task => task.origin === 'diarias' && task.completed === true)
+        .map((task) =>{
             return {
                 ...task,
                 id: self.crypto.randomUUID(),
@@ -374,11 +374,16 @@ const verificarYReinicarTareas = () =>{
                 fechaCompletado: null,
                 fechaCreacion: hoyFormateado
             }
-        })
+        });
 
         tasks = [...tasks, ...nuevasDiariasClonadas];
 
         guardarEnLocalStorage();
+
+        if (typeof renderTasks === 'function') {
+            renderTasks();
+        }
+
     }
     localStorage.setItem('ultimaFechaControl', hoyFormateado);
 }
@@ -409,7 +414,7 @@ const solicitarPermisosNotificaciones = () =>{
 
 
 verificarYReinicarTareas();
-solicitarPermisosNotificaciones();
-verificarFechasProximas();
 renderTasks();
 actualizarPanelEstadisticas();
+solicitarPermisosNotificaciones();
+verificarFechasProximas();
