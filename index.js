@@ -280,9 +280,15 @@ const actualizarPanelEstadisticas = () =>{
     const nombresDias = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
     let conteoUltimos7Dias = [];
 
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(hoyObj.getDate() - i);
+    const diaSemanaActual = hoyObj.getDay();
+    const distanciaAlLunes = diaSemanaActual === 0 ? 6 : diaSemanaActual - 1;
+
+    const lunesActual = new Date(hoyObj);
+    lunesActual.setDate(hoyObj.getDate() - distanciaAlLunes);
+
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(lunesActual);
+        d.setDate(lunesActual.getDate() + i);
         
         const anoLocal = d.getFullYear();
         const mesLocal = String(d.getMonth() + 1).padStart(2, '0');
@@ -363,30 +369,30 @@ const verificarYReinicarTareas = () =>{
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
-        const nuevasDiariasClonadas = tasks
-        .filter(task => task.origin === 'diarias' && task.completed === true)
-        .map((task) =>{
-            return {
-                ...task,
-                id: self.crypto.randomUUID(),
-                completed: false,
-                view: 'diarias',
-                fechaCompletado: null,
-                fechaCreacion: hoyFormateado
-            }
-        });
 
-        tasks = [...tasks, ...nuevasDiariasClonadas];
-
-        guardarEnLocalStorage();
-
-        if (typeof renderTasks === 'function') {
-            renderTasks();
+        if (!yaSeClonoHoy) {
+            
+            const nuevasDiariasClonadas = tasks
+            .filter(task => task.origin === 'diarias' && task.completed === true)
+            .map((task) =>{
+                return {
+                    ...task,
+                    id: self.crypto.randomUUID(),
+                    completed: false,
+                    view: 'diarias',
+                    fechaCompletado: null,
+                    fechaCreacion: hoyFormateado
+                };
+            });
+            
+                    tasks = [...tasks, ...nuevasDiariasClonadas];
+            
+                    guardarEnLocalStorage();
         }
 
     }
     localStorage.setItem('ultimaFechaControl', hoyFormateado);
-}
+};
 
 const cambiarFiltroRealizadas = (nuevoFiltro) =>{
     filtroRealizadasActivo = nuevoFiltro;
