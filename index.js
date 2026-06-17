@@ -398,6 +398,49 @@ const cambiarFiltroRealizadas = (nuevoFiltro) =>{
     renderTasks();
 }
 
+const verificarRecordatorioTarde = () =>{
+    const ahora = new Date();
+    const horaActual = ahora.getHours();
+
+    if (horaActual >= 12 && horaActual < 23) {
+        const misionesPendientes = tasks.some(task => task.origin === 'diarias' && !task.completed );
+
+        if (misionesPendientes) {
+            const hoy = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`;
+            const yaNotificadoTarde = sessionStorage.getItem(`notificado-tarde-${hoy}`);
+
+            if (!yaNotificadoTarde && 'Notification' in window && Notification.permission === 'granted') {
+                
+                const alertasCyberpunk = [
+                    "¡Aún queda día por delante! Tienes algunas tareas diarias pendientes por completar. ¡Tú puedes!",
+                    "Recordatorio de la tarde: No olvides revisar tu lista de misiones de hoy para cerrar el día con éxito.",
+                    "¡Hola! Date un momento para tachar las tareas que ya realizaste hoy. ¡Mantén el ritmo!",
+                    "Organiza tu cierre de día: Revisa las tareas diarias que te faltan por cumplir antes de que termine el día."
+                ];
+
+                const mensajeAleatorio = alertasCyberpunk[Math.floor(Math.random() * alertasCyberpunk.length)];
+
+                new Notification("⚡Alerta de Rutina",{
+                    body: mensajeAleatorio,
+                    icon: "Assest/icon.png",
+                    tag: `alerta-vespertina-${hoy}`
+                });
+
+                sessionStorage.setItem(`notificado-tarde-${hoy}`, 'true');
+            
+            }
+        }
+    }
+}; 
+
+const iniciaRecordatorioVespertino = () =>{
+    verificarRecordatorioTarde();
+
+    setInterval(verificarRecordatorioTarde, 300000);
+}
+
+
+
 
 const solicitarPermisosNotificaciones = () =>{
     if ('Notification' in window) {
@@ -418,3 +461,4 @@ renderTasks();
 actualizarPanelEstadisticas();
 solicitarPermisosNotificaciones();
 verificarFechasProximas();
+iniciaRecordatorioVespertino();
