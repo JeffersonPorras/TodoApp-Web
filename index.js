@@ -78,11 +78,21 @@ const renderTasks = () =>{
         const li = document.createElement('li');
         li.classList.add('container__section-item');
 
+        if (task.completed) {
+            li.classList.add('container__section-item--completed');
+        }
+
         const taskContentContainer = document.createElement('div');
         taskContentContainer.classList.add('container__task-content');
         
         const taskTextSpan = document.createElement('span');
         taskTextSpan.textContent = task.text;
+
+        if (task.completed && task.origin === 'diarias') {
+            taskTextSpan.style.textDecoration = 'line-through';
+            taskTextSpan.style.opacity = '0.6';
+        }
+
         taskContentContainer.appendChild(taskTextSpan);
 
          if (task.fechaVencimiento) {
@@ -130,20 +140,29 @@ const renderTasks = () =>{
         btnContainer.appendChild(dateBtn);
         }
         
-        const completeBtn = document.createElement('button');
+        if (!task.completed) {
+            const completeBtn = document.createElement('button');
+            completeBtn.classList.add('container__btn-action', 'container__btn-check');
+            completeBtn.textContent = '✔';
+            completeBtn.addEventListener('click', () => completarTareaPorId(task.id));
+            btnContainer.appendChild(completeBtn);
+        }
+
+
+        /* const completeBtn = document.createElement('button');
         completeBtn.classList.add('container__btn-action', 'container__btn-check');
         completeBtn.textContent = '✔';
-        completeBtn.addEventListener('click', () => completarTareaPorId(task.id));
+        completeBtn.addEventListener('click', () => completarTareaPorId(task.id)); */
 
 
         const deleteBtn = document.createElement('button');
         deleteBtn.classList.add('container__btn-action', 'container__btn-delete');
         deleteBtn.textContent = '❌';
         deleteBtn.addEventListener('click', () => eliminarTareaPorId(task.id));
-
-
-        btnContainer.appendChild(completeBtn);
         btnContainer.appendChild(deleteBtn);
+
+
+        /* btnContainer.appendChild(completeBtn); */
         
         li.appendChild(btnContainer);
 
@@ -151,14 +170,22 @@ const renderTasks = () =>{
             listasDiarias.appendChild(li);
         } else if (task.view === 'futuras') {
             listasFuturas.appendChild(li);
-        } else if(task.view === 'realizadas'){
+        } 
+
+        if (task.completed) {
+            const liRealizada = li.cloneNode(true);
+
+            const btnEliminarClon = liRealizada.querySelector('container__btn-delete');
+            if (btnEliminarClon) {
+                btnEliminarClon.addEventListener('click', () => eliminarTareaPorId(task.id));
+            }
 
             if (filtroRealizadasActivo === 'todas') {
-                listasRealizadas.appendChild(li)
+                listasRealizadas.appendChild(liRealizada);
             }else if (task.origin === filtroRealizadasActivo) {
-                listasRealizadas.appendChild(li);
+                listasRealizadas.appendChild(liRealizada);
             }
-        } 
+        }
     });
 
     const pestañaEstadisticasActiva = document.querySelector('.container__nav-btn[data-view="estadisticas"]');
@@ -369,6 +396,7 @@ const verificarYReinicarTareas = () =>{
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
+        const yaSeClonoHoy = tasks.some(task => task.fechaCreacion === hoyFormateado);
 
         if (!yaSeClonoHoy) {
             
