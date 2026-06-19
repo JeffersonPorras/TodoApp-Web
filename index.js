@@ -166,16 +166,18 @@ const renderTasks = () =>{
         
         li.appendChild(btnContainer);
 
-        if (task.view === 'diarias') {
+        if (!task.completed) {
+            if (task.view === 'diarias') {
             listasDiarias.appendChild(li);
         } else if (task.view === 'futuras') {
             listasFuturas.appendChild(li);
         } 
+        }
 
-        if (task.completed) {
+        if (task.completed || task.fechaCompletado) {
             const liRealizada = li.cloneNode(true);
 
-            const btnEliminarClon = liRealizada.querySelector('container__btn-delete');
+            const btnEliminarClon = liRealizada.querySelector('.container__btn-delete');
             if (btnEliminarClon) {
                 btnEliminarClon.addEventListener('click', () => eliminarTareaPorId(task.id));
             }
@@ -217,7 +219,6 @@ const completarTareaPorId = (id) =>{
             return {
                 ...task,
                 completed:true,
-                view:'realizadas',
                 fechaCompletado: fechaHoyString
             };
         }
@@ -324,7 +325,6 @@ const actualizarPanelEstadisticas = () =>{
 
 
         const completadasEseDia = tasks.filter(t =>
-            t.completed == true &&
             t.origin === 'diarias' &&
             t.fechaCompletado === fechaStringLocal
         ).length;
@@ -396,31 +396,23 @@ const verificarYReinicarTareas = () =>{
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
-        const yaSeClonoHoy = tasks.some(task => task.fechaCreacion === hoyFormateado);
-
-        if (!yaSeClonoHoy) {
-            
-            const nuevasDiariasClonadas = tasks
-            .filter(task => task.origin === 'diarias' && task.completed === true)
-            .map((task) =>{
-                return {
+        tasks = tasks.map(task => {
+            if (task.origin === 'diarias') {
+                return{
                     ...task,
-                    id: self.crypto.randomUUID(),
                     completed: false,
-                    view: 'diarias',
-                    fechaCompletado: null,
-                    fechaCreacion: hoyFormateado
+                    fechaCompletado: null
                 };
-            });
-            
-                    tasks = [...tasks, ...nuevasDiariasClonadas];
-            
-                    guardarEnLocalStorage();
+            }
+            return task;
+        });
+                    
+        guardarEnLocalStorage();
         }
 
-    }
-    localStorage.setItem('ultimaFechaControl', hoyFormateado);
+        localStorage.setItem('ultimaFechaControl', hoyFormateado);
 };
+
 
 const cambiarFiltroRealizadas = (nuevoFiltro) =>{
     filtroRealizadasActivo = nuevoFiltro;
