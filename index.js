@@ -59,7 +59,8 @@ containerBtn.addEventListener('click', () =>{
         completed: false,
         view: vistaActual,
         origin: vistaActual,
-        fechaCreacion: new Date().toISOString().split('T')[0]
+        fechaCreacion: new Date().toISOString().split('T')[0],
+        esRutina: vistaActual === 'diarias' ? true : false
     };
 
     tasks.push(newtask);
@@ -199,11 +200,18 @@ const renderTasks = () =>{
 }
 
 const eliminarTareaPorId = (id) =>{
-    tasks = tasks.filter(task => task.id !== id);
+    const tareaAEliminar = tasks.find(t => t.id !== id);
+
+    if (tareaAEliminar && tareaAEliminar.origin === 'diarias') {
+        tasks = tasks.filter(task => task.text !== tareaAEliminar.text);
+    }else{
+        tasks = tasks.filter(task = task.id !== id);
+    }
+
     guardarEnLocalStorage();
     renderTasks();
     actualizarPanelEstadisticas();
-}
+};
 
 const completarTareaPorId = (id) =>{
 
@@ -396,20 +404,37 @@ const verificarYReinicarTareas = () =>{
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
-        tasks = tasks.map(task => {
-            if (task.origin === 'diarias') {
-                return{
-                    ...task,
-                    completed: false,
-                    fechaCompletado: null
-                };
-            }
-            return task;
-        });
-                    
-        guardarEnLocalStorage();
+       tasks = tasks.map(task => {
+        if (task.origin === 'diarias' && !task.completed && task.view === 'diarias') {
+            return {...task, view: 'archivadas'};
         }
+        return task;
+       });
+       
+       const misRutinasBase = [...new Set(
+        tasks.filter(t => t.esRutina = true).map(t => t.text)
+       )];
 
+       misRutinasBase.forEach((texto, indice) => {
+        const yaExisteHoy = tasks.some(t => t.origin === 'diarias' && t.text === texto && t.fechaCreacion === hoyFormateado);
+
+        if (!yaExisteHoy) {
+            const nuevaMision = {
+                id: Date.now() + indice + Math.random(),
+                text: texto,
+                completed: false,
+                view: 'diarias',
+                origin: 'diarias',
+                fechaCreacion : hoyFormateado,
+                fechaCompletado: null,
+                esRutina: true
+            };
+            tasks.push(nuevaMision);
+        }
+       });
+
+        guardarEnLocalStorage();
+    }
         localStorage.setItem('ultimaFechaControl', hoyFormateado);
 };
 
