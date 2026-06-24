@@ -205,7 +205,7 @@ const eliminarTareaPorId = (id) =>{
     if (tareaAEliminar && tareaAEliminar.origin === 'diarias') {
         tasks = tasks.filter(task => task.text !== tareaAEliminar.text);
     }else{
-        tasks = tasks.filter(task = task.id !== id);
+        tasks = tasks.filter(task => task.id !== id);
     }
 
     guardarEnLocalStorage();
@@ -412,7 +412,7 @@ const verificarYReinicarTareas = () =>{
        });
        
        const misRutinasBase = [...new Set(
-        tasks.filter(t => t.esRutina = true).map(t => t.text)
+        tasks.filter(t => t.esRutina === true).map(t => t.text)
        )];
 
        misRutinasBase.forEach((texto, indice) => {
