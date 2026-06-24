@@ -149,21 +149,12 @@ const renderTasks = () =>{
             btnContainer.appendChild(completeBtn);
         }
 
-
-        /* const completeBtn = document.createElement('button');
-        completeBtn.classList.add('container__btn-action', 'container__btn-check');
-        completeBtn.textContent = '✔';
-        completeBtn.addEventListener('click', () => completarTareaPorId(task.id)); */
-
-
         const deleteBtn = document.createElement('button');
         deleteBtn.classList.add('container__btn-action', 'container__btn-delete');
         deleteBtn.textContent = '❌';
         deleteBtn.addEventListener('click', () => eliminarTareaPorId(task.id));
         btnContainer.appendChild(deleteBtn);
 
-
-        /* btnContainer.appendChild(completeBtn); */
         
         li.appendChild(btnContainer);
 
@@ -200,7 +191,7 @@ const renderTasks = () =>{
 }
 
 const eliminarTareaPorId = (id) =>{
-    const tareaAEliminar = tasks.find(t => t.id !== id);
+    const tareaAEliminar = tasks.find(t => t.id === id);
 
     if (tareaAEliminar && tareaAEliminar.origin === 'diarias') {
         tasks = tasks.filter(task => task.text !== tareaAEliminar.text);
