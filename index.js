@@ -396,6 +396,11 @@ const verificarYReinicarTareas = () =>{
 
     if (ultimaFecha && ultimaFecha !==  hoyFormateado) {
 
+        const misRutinasBase = [...new Set(
+         tasks.filter(t => t.esRutina === true).map(t => t.text)
+        )];
+
+        
        tasks = tasks.map(task => {
         if (task.origin === 'diarias' && !task.completed && task.view === 'diarias') {
             return {...task, view: 'archivadas'};
@@ -403,9 +408,6 @@ const verificarYReinicarTareas = () =>{
         return task;
        });
        
-       const misRutinasBase = [...new Set(
-        tasks.filter(t => t.esRutina === true).map(t => t.text)
-       )];
 
        misRutinasBase.forEach((texto, indice) => {
         const yaExisteHoy = tasks.some(t => t.origin === 'diarias' && t.text === texto && t.fechaCreacion === hoyFormateado);
