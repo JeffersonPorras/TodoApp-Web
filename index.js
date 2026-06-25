@@ -332,7 +332,8 @@ const actualizarPanelEstadisticas = () =>{
             label: nombresDias[d.getDay()],
             amount: completadasEseDia
         });
-        
+    }
+
         const maxTarea = Math.max(...conteoUltimos7Dias.map(d => d.amount));
         gridDiasSemana.innerHTML = '';
 
@@ -360,7 +361,7 @@ const actualizarPanelEstadisticas = () =>{
    }
 
 }
-}
+
 
 
 const guardarEnLocalStorage = () =>{
@@ -425,6 +426,7 @@ const verificarYReinicarTareas = () =>{
        });
 
         guardarEnLocalStorage();
+        renderTasks();
     }
         localStorage.setItem('ultimaFechaControl', hoyFormateado);
 };
