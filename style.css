@@ -83,6 +83,23 @@ body.light-mode .container__btn-action{
     border: 2px solid rgba(2, 2, 2, 0.08);
 }
 
+.main-title{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.title-accent{
+    color: #00ffcc;
+    animation: parpadeo 1s infinite;
+}
+
 .container{
     width: 100%;
     max-width: 520px;
@@ -465,6 +482,11 @@ body.light-mode .container__btn-action{
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@keyframes parpadeo {
+    0%, 100% {opacity: 1;}
+    50%{opacity: 0;}
 }
 
 @media (min-width: 500px){

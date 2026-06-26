@@ -1,9 +1,9 @@
 {
     "name": "To-Do List",
-    "short_name": "MyList",
+    "short_name": "WarList",
     "start_url": "./index.html",
     "display": "standalone",
-    "background_color": "#ffffff",
+    "background_color": "#0b0f19",
     "theme_color": "#121212",
     "icons": [
         {
