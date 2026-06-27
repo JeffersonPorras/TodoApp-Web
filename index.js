@@ -53,13 +53,23 @@ containerBtn.addEventListener('click', () =>{
 
     if (taskText === '') return;
 
+    const opciones = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    };
+    const hoyLocal = new Date().toLocaleDateString('es-CO', opciones);
+
+    const [dia, mes, ano] = hoyLocal.split('/');
+    const fechaFormateadaLocal = `${ano}-${mes}-${dia}`;
+
     const newtask = {
         id: Date.now(),
         text: taskText,
         completed: false,
         view: vistaActual,
         origin: vistaActual,
-        fechaCreacion: new Date().toISOString().split('T')[0],
+        fechaCreacion: fechaFormateadaLocal,
         esRutina: vistaActual === 'diarias' ? true : false
     };
 
@@ -206,10 +216,18 @@ const eliminarTareaPorId = (id) =>{
 
 const completarTareaPorId = (id) =>{
 
-    const hoy = new Date();
+  /*   const hoy = new Date();
     const dia = String(hoy.getDate()).padStart(2, '0')
     const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-    const ano = hoy.getFullYear();
+    const ano = hoy.getFullYear(); */
+    const opciones = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    };
+    const hoyLocal = new Date().toLocaleDateString('es-CO', opciones);
+
+    const [dia, mes, ano] = hoyLocal.split('/');
     const fechaHoyString = `${ano}-${mes}-${dia}`;
 
 
@@ -386,10 +404,15 @@ themeToggleBtn.addEventListener('click', () =>{
 });
 
 const verificarYReinicarTareas = () =>{
-    const hoyObj = new Date();
-    const dia = String(hoyObj.getDate()).padStart(2, '0')
-    const mes = String(hoyObj.getMonth() + 1).padStart(2, '0');
-    const ano = hoyObj.getFullYear();
+   
+    const opciones = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    };
+    const hoyLocal = new Date().toLocaleDateString('es-CO', opciones);
+
+    const [dia, mes, ano] = hoyLocal.split('/');
     const hoyFormateado = `${ano}-${mes}-${dia}`;
 
     const ultimaFecha = localStorage.getItem('ultimaFechaControl');

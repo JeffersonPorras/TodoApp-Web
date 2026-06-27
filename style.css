@@ -83,6 +83,10 @@ body.light-mode .container__btn-action{
     border: 2px solid rgba(2, 2, 2, 0.08);
 }
 
+body.light-mode .main-title{
+    color: var(--text-black);
+}
+
 .main-title{
     font-family: 'Courier New', Courier, monospace;
     font-size: 24px;
