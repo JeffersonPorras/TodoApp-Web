@@ -80,13 +80,94 @@ containerBtn.addEventListener('click', () =>{
     containerInput.focus();
 });
 
+const ordenarYAgruparPorFecha = (listasDiarias, propiedadFecha) => {
+    const grupos = {};
+    listasDiarias.forEach(task =>{
+        const fecha = task[propiedadFecha] ? task[propiedadFecha] : 'Sin fecha';
+        if (!grupos[fecha]) {
+            grupos[fecha] = [];
+        }
+        grupos[fecha].push(task);
+    });
+    return grupos;
+};
+
+const crearContenedorBloqueCronologico = (fecha, tituloPrefijo) =>{
+    const bloqueContainer = document.createElement('div');
+    bloqueContainer.classList.add('cronograma-bloque');
+
+    let fechaFormateada = fecha;
+    if (fecha.includes('-')) {
+        const partes = fecha.split('-')
+        fechaFormateada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    const encabezado = document.createElement('div');
+    encabezado.classList.add('cronograma-header');
+    encabezado.textContent = `${tituloPrefijo}: [${fechaFormateada}]`;
+    bloqueContainer.appendChild(encabezado);
+
+    const ulInterna = document.createElement('ul');
+    ulInterna.classList.add('cronograma-lista');
+    bloqueContainer.appendChild(ulInterna);
+
+    return { bloqueContainer, ulInterna};
+}
+
+
 const renderTasks = () =>{
     listasDiarias.textContent = '';
     listasFuturas.textContent = '';
     listasRealizadas.textContent = '';
 
     tasks.forEach(task => {
-        const li = document.createElement('li');
+        if (!task.completed && task.view === 'diarias') {
+            const li = crearElementoDOMTarea(task);
+            listasDiarias.appendChild(li);
+        }
+    });
+
+    const futurasPendientes = tasks.filter(task => !task.completed && task.view === 'futuras');
+    const futurasAgrupadas = ordenarYAgruparPorFecha(futurasPendientes, 'fechaVencimiento');
+
+    Object.keys(futurasAgrupadas).sort().forEach(fecha => {
+        const {bloqueContainer, ulInterna} = crearContenedorBloqueCronologico(fecha, '//MISION_FUTURA');
+
+        futurasAgrupadas[fecha].forEach(task => {
+            const li = crearElementoDOMTarea(task);
+            ulInterna.appendChild(li);
+        });
+        listasFuturas.appendChild(bloqueContainer);
+    });
+
+    const realizadasFiltradas = tasks.filter(task => task.completed || task.fechaCompletado);
+
+    const realizadasConFiltro = realizadasFiltradas.filter(task => {
+        if (filtroRealizadasActivo === 'todas') return true;
+        return task.origin === filtroRealizadasActivo;
+    })
+
+    const realizadasAgrupadas = ordenarYAgruparPorFecha(realizadasConFiltro, 'fechaCompletado');
+
+    Object.keys(realizadasAgrupadas).sort().reverse().forEach(fecha => {
+        const { bloqueContainer, ulInterna } = crearContenedorBloqueCronologico(fecha, '//STATUS_COMPLETADO')
+
+        realizadasAgrupadas[fecha].forEach(task => {
+            const li = crearElementoDOMTarea(task);
+            ulInterna.appendChild(li);
+        });
+
+        listasRealizadas.appendChild(bloqueContainer);
+    });
+
+    const pestañaEstadisticasActiva = document.querySelector('.container__nav-btn[data-view="estadisticas"]');
+    if (pestañaEstadisticasActiva && pestañaEstadisticasActiva.classList.contains('container__nav-btn--active')) {
+        actualizarPanelEstadisticas();
+    };       
+}
+
+const crearElementoDOMTarea = (task) =>{
+        const li = document.createElement('li')
         li.classList.add('container__section-item');
 
         if (task.completed) {
@@ -95,7 +176,7 @@ const renderTasks = () =>{
 
         const taskContentContainer = document.createElement('div');
         taskContentContainer.classList.add('container__task-content');
-        
+
         const taskTextSpan = document.createElement('span');
         taskTextSpan.textContent = task.text;
 
@@ -106,25 +187,25 @@ const renderTasks = () =>{
 
         taskContentContainer.appendChild(taskTextSpan);
 
-         if (task.fechaVencimiento) {
+        if (task.fechaVencimiento) {
             const dateBadge = document.createElement('span');
-            dateBadge.classList.add('task-date-badge');
+            dateBadge.classList.add('task-date-bagde');
 
             const partes = task.fechaVencimiento.split('-');
             const ano = partes[0];
             const mes = partes[1];
             const dia = partes[2];
-            
+
             dateBadge.textContent = `⏳ ${dia}/${mes}/${ano}`;
             taskContentContainer.appendChild(dateBadge);
-        };
+        }
 
         li.appendChild(taskContentContainer);
 
         const btnContainer = document.createElement('div');
         btnContainer.classList.add('container__item-actions');
-
-
+    
+    
         if (task.view === 'futuras' || task.fechaVencimiento) {
             const dateBtn = document.createElement('button');
             dateBtn.classList.add('container__btn-action', 'date-btn');
@@ -132,25 +213,24 @@ const renderTasks = () =>{
             🗓️ 
             <input type="date" class="task-date-input date-input" value="${task.fechaVencimiento || ''}">
         `;
-
+    
         const dateInput = dateBtn.querySelector('.task-date-input');
         dateInput.addEventListener('change', (e) =>{
             const nuevaFecha = e.target.value;
-
+    
             tasks = tasks.map(t => {
                 if (t.id === task.id) {
                     return {...t, fechaVencimiento: nuevaFecha};
                 }
                 return t;
             });
-
+    
             guardarEnLocalStorage();
             renderTasks();
         });
-
+    
         btnContainer.appendChild(dateBtn);
         }
-        
         if (!task.completed) {
             const completeBtn = document.createElement('button');
             completeBtn.classList.add('container__btn-action', 'container__btn-check');
@@ -158,46 +238,17 @@ const renderTasks = () =>{
             completeBtn.addEventListener('click', () => completarTareaPorId(task.id));
             btnContainer.appendChild(completeBtn);
         }
-
+    
         const deleteBtn = document.createElement('button');
         deleteBtn.classList.add('container__btn-action', 'container__btn-delete');
         deleteBtn.textContent = '❌';
         deleteBtn.addEventListener('click', () => eliminarTareaPorId(task.id));
         btnContainer.appendChild(deleteBtn);
-
+    
         
         li.appendChild(btnContainer);
-
-        if (!task.completed) {
-            if (task.view === 'diarias') {
-            listasDiarias.appendChild(li);
-        } else if (task.view === 'futuras') {
-            listasFuturas.appendChild(li);
-        } 
-        }
-
-        if (task.completed || task.fechaCompletado) {
-            const liRealizada = li.cloneNode(true);
-
-            const btnEliminarClon = liRealizada.querySelector('.container__btn-delete');
-            if (btnEliminarClon) {
-                btnEliminarClon.addEventListener('click', () => eliminarTareaPorId(task.id));
-            }
-
-            if (filtroRealizadasActivo === 'todas') {
-                listasRealizadas.appendChild(liRealizada);
-            }else if (task.origin === filtroRealizadasActivo) {
-                listasRealizadas.appendChild(liRealizada);
-            }
-        }
-    });
-
-    const pestañaEstadisticasActiva = document.querySelector('.container__nav-btn[data-view="estadisticas"]');
-    if (pestañaEstadisticasActiva && pestañaEstadisticasActiva.classList.contains('container__nav-btn--active')) {
-        actualizarPanelEstadisticas();
-    }
-
-
+    
+        return li;
 }
 
 const eliminarTareaPorId = (id) =>{
