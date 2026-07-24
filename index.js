@@ -10,9 +10,15 @@ const listasDiarias = document.getElementById('list-diarias');
 const listasFuturas = document.getElementById('list-futuras');
 const listasRealizadas = document.getElementById('list-realizadas');
 
+const cyberModal = document.getElementById('cyber-modal');
+const cyberModalMsg = document.getElementById('cyber-modal-msg');
+const modalBtnCancel = document.getElementById('modal-btn-cancel');
+const modalBtnConfirm = document.getElementById('modal-btn-confirm');
+
 let tasks = JSON.parse(localStorage.getItem('cyberTasks')) || [];
 let vistaActual = 'diarias';
 let filtroRealizadasActivo = 'todas';
+let idTareaAEliminarTemporal = null;
 
 navButtons.forEach(button =>{
     button.addEventListener('click', () => {
@@ -251,26 +257,46 @@ const crearElementoDOMTarea = (task) =>{
         return li;
 }
 
-const eliminarTareaPorId = (id) =>{
+const eliminarTareaPorId = (id) => {
     const tareaAEliminar = tasks.find(t => t.id === id);
+    if (!tareaAEliminar) return;
 
-    if (tareaAEliminar && tareaAEliminar.origin === 'diarias') {
-        tasks = tasks.filter(task => task.text !== tareaAEliminar.text);
-    }else{
-        tasks = tasks.filter(task => task.id !== id);
+    idTareaAEliminarTemporal = id;
+
+    if (cyberModalMsg) {
+        cyberModalMsg.textContent = `⚠️ ¿Seguro de que deseas eliminar la misión: "${tareaAEliminar.text}" de los registros?`;
     }
 
-    guardarEnLocalStorage();
-    renderTasks();
-    actualizarPanelEstadisticas();
+    if (cyberModal) {
+        cyberModal.classList.remove('cyber-modal__hidden');
+    }
 };
+
+// Evento CONFIRMAR
+if (modalBtnConfirm) {
+    modalBtnConfirm.addEventListener('click', () => {
+        if (idTareaAEliminarTemporal !== null) {
+            tasks = tasks.filter(task => task.id !== idTareaAEliminarTemporal);
+            guardarEnLocalStorage();
+            renderTasks();
+            actualizarPanelEstadisticas();
+        }
+
+        idTareaAEliminarTemporal = null;
+        if (cyberModal) cyberModal.classList.add('cyber-modal__hidden');
+    });
+}
+
+// Evento CANCELAR
+if (modalBtnCancel) {
+    modalBtnCancel.addEventListener('click', () => {
+        idTareaAEliminarTemporal = null;
+        if (cyberModal) cyberModal.classList.add('cyber-modal__hidden');
+    });
+}
 
 const completarTareaPorId = (id) =>{
 
-  /*   const hoy = new Date();
-    const dia = String(hoy.getDate()).padStart(2, '0')
-    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-    const ano = hoy.getFullYear(); */
     const opciones = {
         year: 'numeric',
         month: '2-digit',

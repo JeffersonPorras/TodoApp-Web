@@ -19,7 +19,7 @@
             <button class="container__nav-btn btn-sistemas" data-view="estadisticas">📊 Estadística</button>
         </nav>
 
-        <h1 class="main-title"><span class="title-accent">></span>WARLIST</h1>
+        <h1 class="main-title"><span class="title-accent">></span>Warlist</h1>
 
         <!-- <h1 class="container__title">My Tasks List</h1> -->
 
@@ -67,8 +67,19 @@
                     <p class="stats-motivational" id="stats-motivational-msg">Sistemas estables.</p>
                 </div>
             </div>
+
         </section>
     </main>
+    <div id="cyber-modal" class="cyber-modal__overlay cyber-modal__hidden">
+<div class="cyber-modal__content">
+<div class="cyber-modal__header">// ALERTA_DEL_SISTEMA //</div>
+<p id="cyber-modal-msg" class="cyber-modal__body">¿Estás seguro de que deseas eliminar esta tarea?</p>
+<div class="cyber-modal__actions">
+    <button id="modal-btn-cancel" class="cyber-modal__btn cyber-modal__btn--cancel">CANCELAR</button>
+    <button id="modal-btn-confirm" class="cyber-modal__btn cyber-modal__btn--confirm">ELIMINAR</button>
+</div>
+</div>
+</div>
     <script src="index.js"></script>
 </body>
 </html>
